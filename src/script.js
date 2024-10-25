@@ -29,7 +29,7 @@ const scene = new THREE.Scene();
 
 const textureLoader = new THREE.TextureLoader();
 
-const colorTexture = textureLoader.load("/textures/solar/8k_sun.jpg");
+const colorTexture = textureLoader.load("/textures/solar/2k_sun.jpg");
 colorTexture.colorSpace = THREE.SRGBColorSpace;
 colorTexture.wrapS = THREE.MirroredRepeatWrapping;
 colorTexture.wrapT = THREE.MirroredRepeatWrapping;
@@ -37,12 +37,12 @@ colorTexture.generateMipmaps = false;
 colorTexture.minFilter = THREE.NearestFilter;
 colorTexture.magFilter = THREE.NearestFilter;
 
-const mercuryTexture = textureLoader.load("/textures/solar/8k_mercury.jpg");
-const venusTexture = textureLoader.load("/textures/solar/8k_venus_surface.jpg");
-const earthTexture = textureLoader.load("/textures/solar/8k_earth_daymap.jpg");
-const marsTexture = textureLoader.load("/textures/solar/8k_mars.jpg");
-const jupiterTexture = textureLoader.load("/textures/solar/8k_jupiter.jpg");
-const staurnTexture = textureLoader.load("/textures/solar/8k_saturn.jpg");
+const mercuryTexture = textureLoader.load("/textures/solar/2k_mercury.jpg");
+const venusTexture = textureLoader.load("/textures/solar/2k_venus_surface.jpg");
+const earthTexture = textureLoader.load("/textures/solar/2k_earth_daymap.jpg");
+const marsTexture = textureLoader.load("/textures/solar/2k_mars.jpg");
+const jupiterTexture = textureLoader.load("/textures/solar/2k_jupiter.jpg");
+const staurnTexture = textureLoader.load("/textures/solar/2k_saturn.jpg");
 const uranusTexture = textureLoader.load("/textures/solar/2k_uranus.jpg");
 const neptuneTexture = textureLoader.load("/textures/solar/2k_neptune.jpg");
 /**
