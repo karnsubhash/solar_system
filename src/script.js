@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { Sky } from "three/addons/objects/Sky.js";
 
 /**
  * Base
@@ -45,6 +46,10 @@ const jupiterTexture = textureLoader.load("/textures/solar/2k_jupiter.jpg");
 const staurnTexture = textureLoader.load("/textures/solar/2k_saturn.jpg");
 const uranusTexture = textureLoader.load("/textures/solar/2k_uranus.jpg");
 const neptuneTexture = textureLoader.load("/textures/solar/2k_neptune.jpg");
+
+const saturnTexture = textureLoader.load(
+  "/textures/solar/2k_saturn_ring_alpha.png"
+);
 /**
  * Object
  */
@@ -186,6 +191,38 @@ const saturnPath = new THREE.Mesh(
 );
 scene.add(saturnPath);
 
+const staurnRingGeometry = new THREE.RingGeometry(0.031, 0.04, 99);
+var uvs = staurnRingGeometry.attributes.uv.array;
+var phiSegments = staurnRingGeometry.parameters.phiSegments || 0;
+var thetaSegments = staurnRingGeometry.parameters.thetaSegments || 0;
+phiSegments = phiSegments !== undefined ? Math.max(1, phiSegments) : 1;
+thetaSegments = thetaSegments !== undefined ? Math.max(3, thetaSegments) : 8;
+for (var c = 0, j = 0; j <= phiSegments; j++) {
+  for (var i = 0; i <= thetaSegments; i++) {
+    (uvs[c++] = i / thetaSegments), (uvs[c++] = j / phiSegments);
+  }
+}
+// const staurnRingGeometry = new THREE.RingBufferGeometry(3, 5, 64);
+// var pos = staurnRingGeometry.attributes.position;
+// var v3 = new THREE.Vector3();
+// for (let i = 0; i < pos.count; i++) {
+//   v3.fromBufferAttribute(pos, i);
+//   staurnRingGeometry.attributes.uv.setXY(i, v3.length() < 4 ? 0 : 1, 1);
+// }
+const saturnRing = new THREE.Mesh(
+  staurnRingGeometry,
+  new THREE.MeshPhysicalMaterial({
+    map: saturnTexture,
+    color: "#cccccc",
+    side: THREE.DoubleSide,
+  })
+);
+
+saturnRing.position.x = 1.15;
+saturnRing.rotation.y = -Math.PI / 2;
+
+scene.add(saturnRing);
+
 const uranus = new THREE.Mesh(
   new THREE.SphereGeometry(0.03, 64, 64),
   new THREE.MeshPhysicalMaterial({
@@ -254,11 +291,24 @@ window.addEventListener("resize", () => {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 
+const sky = new Sky();
+sky.scale.set(100, 100, 100);
+scene.add(sky);
+
+sky.material.uniforms["turbidity"].value = 10;
+sky.material.uniforms["rayleigh"].value = 3;
+sky.material.uniforms["mieCoefficient"].value = 0.1;
+sky.material.uniforms["mieDirectionalG"].value = 0.95;
+sky.material.uniforms["sunPosition"].value.set(0.3, -0.038, -0.95);
+
 const pointLight = new THREE.PointLight(0xffffff, 2);
 // pointLight.position.x = 0;
 // pointLight.position.y = 0;
 // pointLight.position.z = 0;
 scene.add(pointLight);
+
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.1);
+scene.add(ambientLight);
 
 /**
  * Camera
@@ -316,6 +366,10 @@ const tick = () => {
 
   saturn.position.y = 1.15 * Math.sin(factor / 1.8);
   saturn.position.x = 1.15 * Math.cos(factor / 1.8);
+
+  saturnRing.position.y = 1.15 * Math.sin(factor / 1.8);
+  saturnRing.position.x = 1.15 * Math.cos(factor / 1.8);
+
   uranus.position.y = 1.35 * Math.sin(Math.PI - factor / 1.6);
   uranus.position.x = 1.35 * Math.cos(Math.PI - factor / 1.6);
   neptune.position.y = 1.45 * Math.sin(factor / 1.6);
@@ -327,6 +381,8 @@ const tick = () => {
   mars.rotation.y = -0.65 * elapsedTime;
   jupiter.rotation.y = -5 * elapsedTime;
   saturn.rotation.y = -4 * elapsedTime;
+  saturnRing.rotation.z = -4 * elapsedTime;
+
   uranus.rotation.y = 1 * elapsedTime;
   neptune.rotation.y = -0.5 * elapsedTime;
 
